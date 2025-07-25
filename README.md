@@ -8,16 +8,13 @@ This project implements an ETL (Extract, Transform, Load) system using Apache Ai
 ### 1. Apache Airflow
 - **DAGs**: Orchestrate extraction, transformation, and loading tasks.
 - **Data Sources**:
-  - Frankfurter API: Exchange rates.
-  - Restcountries API: Country information.
-  - World Bank API: GDP data.
+  - [Frankfurter API](https://www.frankfurter.app/): Exchange rates.
+  - [Restcountries API](https://restcountries.com/): Country information.
+  - [World Bank API](https://data.worldbank.org/): GDP data.
 
-### 2. MongoDB
-- Stores processed data from different sources.
-- Collections:
-  - `frankfurter_data`
-  - `restcountries_data`
-  - `worldbank_data`
+### 2. MongoDB vs PostgreSQL
+- **MongoDB**: Used for this project due to its flexibility in handling semi-structured data like JSON, which is ideal for APIs.
+- **PostgreSQL**: While suitable for structured data, it was not chosen as the APIs used return data in JSON format, making MongoDB a better fit.
 
 ### 3. Streamlit
 - Interactive application for visualizing processed data.
@@ -47,31 +44,21 @@ This project implements an ETL (Extract, Transform, Load) system using Apache Ai
    - Access the Airflow interface at `http://localhost:8080`.
    - Access the Streamlit application at `http://localhost:8501`.
 
-### Common Issues and Solutions
-
-- **Docker not installed**:
-  Ensure Docker and Docker Compose are installed on your system. Follow the [Docker installation guide](https://docs.docker.com/get-docker/).
-
-- **Port conflicts**:
-  If `8080` or `8501` are already in use, update the `docker-compose.yml` file to use different ports.
-
-- **MongoDB connection issues**:
-  Ensure the MongoDB container is running and accessible. Check logs with:
-  ```bash
-  docker logs <container_id>
-  ```
-
-- **Airflow DAGs not appearing**:
-  Verify that the `dags` folder is correctly mounted in the Airflow container. Restart the container if necessary:
-  ```bash
-  docker-compose restart
-  ```
-
 ## Usage
 
-1. Access the Airflow interface at `http://localhost:8080`.
-2. Run the DAGs to process the data.
-3. Access the Streamlit application at `http://localhost:8501` to visualize the data.
+### Triggering the DAG and Checking Logs
+1. Open the Airflow interface at `http://localhost:8080`.
+2. Navigate to the DAGs section and trigger the desired DAG.
+3. Check logs by clicking on the task instance in the DAG view.
+
+### Opening the Streamlit Dashboard
+1. Access the Streamlit application at `http://localhost:8501`.
+2. Use the interactive dashboard to visualize processed data.
+
+## Explanation of XCom Usage
+- **XComs**: Used in Airflow to pass data between tasks.
+  - Example: The `extract_currency_data` task pushes raw data to XComs, which is then pulled by the `transform_currency_data` task for processing.
+  - This mechanism ensures modularity and allows tasks to communicate efficiently.
 
 ## Project Structure
 ```
